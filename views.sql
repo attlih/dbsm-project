@@ -1,5 +1,5 @@
 -- Create view to show all employees and their skills
-CREATE OR REPLACE VIEW employee_skills AS
+CREATE OR REPLACE VIEW employees_and_skills AS
 SELECT employee.e_id AS employee_id, employee.emp_name AS employee_name, STRING_AGG(DISTINCT skills.skill, ', ') AS skill
 FROM employee
 INNER JOIN employee_skills ON employee.e_id = employee_skills.e_id
@@ -8,8 +8,14 @@ GROUP BY employee_id, employee_name;
 
 -- Create view to show all headquarters and their locations
 CREATE OR REPLACE VIEW headquarter_locations AS
-SELECT h_id, hq_name, street, city, country FROM headquarters
+SELECT h_id AS hq_id, hq_name, street, city, country FROM headquarters
 INNER JOIN geo_location ON geo_location.l_id = headquarters.l_id;
+
+-- Create view to show all projects and their customers, sorted by due date
+CREATE OR REPLACE VIEW projects_and_customers AS
+SELECT c_name AS customer, project_name AS project, budget, p_start_date AS start_date, p_end_date AS due_date FROM customer
+INNER JOIN project ON project.c_id = customer.c_id
+ORDER BY due_date;
 
 -- Create view to show employees department, headquarters and location
 CREATE OR REPLACE VIEW employees_in_department AS
