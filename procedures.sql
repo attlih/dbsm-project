@@ -39,3 +39,15 @@ BEGIN
 	END IF;
 END
 $$;
+
+
+-- A procedure that calculates the correct salary based on the acquired skills (skills may give a salary bonus and it is indicated in the database)
+CREATE OR REPLACE PROCEDURE calculate_salary_based_on_skills()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  UPDATE employee
+    SET salary = salary + (SELECT SUM(salary_benefit_value) FROM skills WHERE s_id IN (SELECT s_id FROM employee_skills WHERE e_id = employee.e_id));
+END
+$$;
+
