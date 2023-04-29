@@ -1,5 +1,5 @@
 --Creating a new table to partition employee based on contract type
-DROP TABLE employee_partition;
+DROP TABLE IF EXISTS employee_partition;
 CREATE TABLE employee_partition (
   e_id integer NOT NULL,
   emp_name character varying(100),
@@ -13,15 +13,18 @@ CREATE TABLE employee_partition (
   j_id integer
 ) PARTITION BY LIST (contract_type);
 
--- Creating partitions 
+-- Creating partitions
+DROP TABLE IF EXISTS employees_part_time;
 CREATE TABLE employees_part_time
 PARTITION OF employee_partition
 FOR VALUES IN ('Part-time');
 
+DROP TABLE IF EXISTS employees_full_time;
 CREATE TABLE employees_full_time
 PARTITION OF employee_partition
 FOR VALUES IN ('Full-time');
 
+DROP TABLE IF EXISTS employees_temporary;
 CREATE TABLE employees_temporary
 PARTITION OF employee_partition
 FOR VALUES IN ('Temporary');
