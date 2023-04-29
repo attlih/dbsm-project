@@ -1,7 +1,3 @@
--- Database Schema is named "Project"
--- Database has following tables: customer, department, employee, employee_skills, employee_user_group, geo_location, headquarters, job_title, project, project_role, skills, user_group
-
-
 --  Create three triggers for the database:
 -- One for before inserting a new skill, make sure that the same skill does not already exist
 CREATE OR REPLACE FUNCTION check_skill_exists()
@@ -19,7 +15,9 @@ BEFORE INSERT ON skills
 FOR EACH ROW
 EXECUTE PROCEDURE check_skill_exists();
 
--- One for after inserting a new project,  check the customer country and select three employees from that country to start working with the project (i.e. create new project roles)
+
+-- One for after inserting a new project, check the customer country and select three employees from that
+--  country to start working with the project (i.e. create new project roles)
 CREATE OR REPLACE FUNCTION create_project_roles()
 RETURNS TRIGGER AS $$
   DECLARE
@@ -55,7 +53,9 @@ FOR EACH ROW
 EXECUTE PROCEDURE create_project_roles();
 
 
--- One for before updating the employee contract type, make sure that the contract start date is also set to the current date and end date is either 2 years after the start date if contract is of Temporary type, NULL otherwise. (Temporary contract in Finnish is "määräaikainen". It's a contract that has an end date specified).
+-- One for before updating the employee contract type, make sure that the contract start date is
+--  also set to the current date and end date is either 2 years after the start date if contract is of Temporary type,
+--  NULL otherwise. (Temporary contract in Finnish is "määräaikainen". It's a contract that has an end date specified).
 CREATE OR REPLACE FUNCTION set_contract_dates()
 RETURNS TRIGGER AS $$
   BEGIN
@@ -78,3 +78,30 @@ CREATE TRIGGER set_contract_dates
 BEFORE UPDATE ON employee
 FOR EACH ROW
 EXECUTE PROCEDURE set_contract_dates();
+
+
+-- A trigger after insert on employee.
+-- If employee's job title is HR secretary, add them to the HR user group.
+ -- If employee's job matches word 'admin', add them to the Administration group.
+ -- Everyone else is added to the employee group
+CREATE OR REPLACE FUNCTION add_to_user_group()
+RETURNS TRIGGER AS $$
+  DECLARE
+    job VARCHAR(20);
+  BEGIN
+    SELECT title INTO job FROM job_title WHERE j_id = NEW.j_id;
+    IF job = 'HR secretary' THEN
+      INSERT INTO employee_user_group (e_id, u_id, eug_join_date) VALUES (NEW.e_id, 6, CURRENT_DATE); -- HR user group
+    ELSIF job LIKE '%admin%' THEN
+      INSERT INTO employee_user_group (e_id, u_id, eug_join_date) VALUES (NEW.e_id, 3, CURRENT_DATE); -- Administration user group
+    ELSE
+      INSERT INTO employee_user_group (e_id, u_id, eug_join_date) VALUES (NEW.e_id, 9, CURRENT_DATE); -- Employee user group
+    END IF;
+    RETURN NEW;
+  END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR Replace TRIGGER add_to_user_group
+AFTER INSERT ON employee
+FOR EACH ROW
+EXECUTE PROCEDURE add_to_user_group();
