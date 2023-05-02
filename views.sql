@@ -24,3 +24,15 @@ LEFT JOIN department ON employee.d_id = department.d_id
 LEFT JOIN headquarters ON department.hid = headquarters.h_id
 LEFT JOIN geo_location ON headquarters.l_id = geo_location.l_id;
 
+-- Create view to show the amount of employees in different departments
+CREATE OR REPLACE VIEW people_in_departments AS
+SELECT dep_name, COUNT(*) FROM department
+INNER JOIN employee ON employee.d_id = department.d_id
+GROUP By dep_name;
+
+-- Create view to show all supervisors
+CREATE OR REPLACE VIEW all_supervisors AS
+SELECT DISTINCT emp_name, employee.e_id FROM employee
+INNER JOIN employee_user_group ON employee.e_id = employee_user_group.e_id
+INNER JOIN user_group ON employee_user_group.u_id = user_group.u_id AND group_title = 'Supervisor group'
+ORDER BY emp_name, employee.e_id;
