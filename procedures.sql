@@ -47,7 +47,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
   UPDATE employee
-    SET salary = salary + (SELECT SUM(salary_benefit_value) FROM skills WHERE s_id IN (SELECT s_id FROM employee_skills WHERE e_id = employee.e_id));
+    SET salary = (SELECT base_salary from job_title WHERE j_id = employee.j_id) --base salary 
+    + (SELECT SUM(salary_benefit_value) FROM skills WHERE s_id IN (SELECT s_id FROM employee_skills WHERE e_id = employee.e_id)); --salary bonus from skills
 END
 $$;
-
