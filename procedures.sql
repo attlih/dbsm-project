@@ -23,7 +23,7 @@ $$;
 
 -- Creates a procedure to increase salaries by a given percentage (decimal). A maximum limit can also be given
 -- for the salaries to be increased.
-CREATE OR REPLACE PROCEDURE increase_salary_by_percentage(percentage numeric, max_limit integer)
+CREATE OR REPLACE PROCEDURE increase_salary_by_percentage(percentage numeric, max_limit integer default null)
 LANGUAGE plpgsql
 AS $$
 BEGIN
