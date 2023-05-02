@@ -5,7 +5,6 @@
 CREATE ROLE admin;
 CREATE ROLE employee;
 CREATE ROLE trainee;
-CREATE ROLE views_only;
 
 -- Give admin all administrative rights (same rights as postgres superuser would have)
 GRANT ALL ON ALL TABLES IN SCHEMA public TO admin;
@@ -18,7 +17,11 @@ GRANT SELECT ON
   geo_location,
   project_role
 TO trainee;
+
+
 -- An additional role called views_only and give them read access to all created views (and nothing else)
+CREATE ROLE views_only;
+
 GRANT SELECT ON
   employees_and_skills,
   headquarter_locations,
