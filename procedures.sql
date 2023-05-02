@@ -23,7 +23,7 @@ $$;
 
 -- Creates a procedure to increase salaries by a given percentage (decimal). A maximum limit can also be given
 -- for the salaries to be increased.
-CREATE OR REPLACE PROCEDURE increase_salary_by_percentage(percentage numeric, max_limit integer)
+CREATE OR REPLACE PROCEDURE increase_salary_by_percentage(percentage numeric, max_limit integer default null)
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -47,7 +47,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
   UPDATE employee
-    SET salary = (SELECT base_salary from job_title WHERE j_id = employee.j_id) --base salary 
+    SET salary = salary --base salary 
     + (SELECT SUM(salary_benefit_value) FROM skills WHERE s_id IN (SELECT s_id FROM employee_skills WHERE e_id = employee.e_id)); --salary bonus from skills
 END
 $$;
