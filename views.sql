@@ -32,7 +32,7 @@ GROUP By dep_name;
 
 -- Create view to show all supervisors
 CREATE OR REPLACE VIEW all_supervisors AS
-SELECT DISTINCT emp_name, employee.e_id FROM employee
+SELECT employee.e_id AS employee_id, emp_name AS employee_name, email FROM employee
 INNER JOIN employee_user_group ON employee.e_id = employee_user_group.e_id
 INNER JOIN user_group ON employee_user_group.u_id = user_group.u_id AND group_title = 'Supervisor group'
-ORDER BY emp_name, employee.e_id;
+ORDER BY employee_id, employee_name;
