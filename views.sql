@@ -18,7 +18,7 @@ INNER JOIN project ON project.c_id = customer.c_id
 ORDER BY due_date;
 
 -- Create view to show employees department, headquarters and location
-CREATE OR REPLACE VIEW employees_in_department AS
+CREATE OR REPLACE VIEW employees_with_address AS
 SELECT e_id, emp_name, dep_name, hq_name, geo_location.l_id, street, city, country FROM employee
 LEFT JOIN department ON employee.d_id = department.d_id
 LEFT JOIN headquarters ON department.hid = headquarters.h_id

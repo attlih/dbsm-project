@@ -23,9 +23,9 @@ GRANT SELECT ON
   employees_and_skills,
   headquarter_locations,
   projects_and_customers,
-  employees_in_department,
+  employees_with_address,
   all_supervisors,
-  people_in_department
+  people_in_departments
 TO views_only;
 
 

@@ -36,7 +36,7 @@ RETURNS TRIGGER AS $$
       WHERE geo_location.country = country_name 
       AND geo_location.l_id IN (SELECT l_id FROM headquarters);
     -- Get three employees from that country
-    SELECT ARRAY(SELECT public.employees_in_department.e_id FROM public.employees_in_department WHERE l_id = country_id LIMIT 3) INTO employee_ids;
+    SELECT ARRAY(SELECT public.employees_with_address.e_id FROM public.employees_with_address WHERE l_id = country_id LIMIT 3) INTO employee_ids;
     -- Create project role for each employee selected
     FOREACH e_id IN ARRAY employee_ids
     LOOP
@@ -59,6 +59,7 @@ EXECUTE PROCEDURE create_project_roles();
 CREATE OR REPLACE FUNCTION set_contract_dates()
 RETURNS TRIGGER AS $$
   BEGIN
+  raise notice '%', new.contract_start;
     IF NEW.contract_type = 'Temporary' AND NEW.contract_start IS NULL THEN
       NEW.contract_start = CURRENT_DATE;
       NEW.contract_end = CURRENT_DATE + INTERVAL '2 years';
@@ -74,7 +75,7 @@ RETURNS TRIGGER AS $$
   END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER set_contract_dates
+CREATE OR REPLACE TRIGGER set_contract_dates
 BEFORE UPDATE ON employee
 FOR EACH ROW
 EXECUTE PROCEDURE set_contract_dates();
@@ -102,6 +103,6 @@ RETURNS TRIGGER AS $$
 $$ LANGUAGE plpgsql;
 
 CREATE OR Replace TRIGGER add_to_user_group
-AFTER INSERT ON employee
+AFTER INSERT OR UPDATE ON employee
 FOR EACH ROW
 EXECUTE PROCEDURE add_to_user_group();
