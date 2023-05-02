@@ -18,6 +18,9 @@ GRANT SELECT ON
   geo_location,
   project_role
 TO trainee;
+
+GRANT SELECT (e_id, emp_name, email) ON employee TO trainee;
+
 -- An additional role called views_only and give them read access to all created views (and nothing else)
 GRANT SELECT ON
   employees_and_skills,
